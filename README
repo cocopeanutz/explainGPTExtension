@@ -1,1 +1,17 @@
-Change shortcut from manifest.json
+Change shortcut from manifest.json, default shortcut is alt+shift+u
+Change prompt by changing promptTemplate
+
+
+To install to firefox,
+1. Got to about:addons in the address bar.
+2. Click on the gear icon in the top-right corner and select "Install Add-on From File..."
+3. Select the zipped extension file
+
+However take note that firefox needs any extension to be signed by them before use even extension from local files.
+If the extension is not signed, firefox will popup error thinking that the extension is corrupted.
+
+If you don't want to go through the signing process hasle. Use Firefox Developer Edition or Nightly Build.
+And toggle the xpinstall.signatures.required options on about:config to False.
+
+
+To zip this folder use "7z a -tzip myarchive.zip myfolder"
