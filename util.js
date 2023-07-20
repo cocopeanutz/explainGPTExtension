@@ -63,7 +63,7 @@ export function getHighlightedText(currentTabId, callback){
     }
 }
 
-export function storageGet(key, callback, errorCallback){
+export function storageGet(key, callback){
     var browserName = queryBrowserName();
 
     if (browserName=='firefox') {
@@ -77,11 +77,11 @@ export function storageGet(key, callback, errorCallback){
     }
 }
 
-export function storageSet(key, callback, errorCallback){
+export function storageSet(keyValuePair, callback){
     var browserName = queryBrowserName();
 
     if (browserName=='firefox') {
-        mainControl.storage.local.set({ "openaiKey": key })
+        mainControl.storage.local.set(keyValuePair)
         .then(() => {
             console.log("Key stored successfully!");
             createNotification("OpenAI Key successfully Inputted");
@@ -92,7 +92,7 @@ export function storageSet(key, callback, errorCallback){
         });
     }
     else if (browserName=='chrome'){
-        mainControl.storage.local.set({ "openaiKey": key });
+        mainControl.storage.local.set(keyValuePair);
         console.log("Key stored successfully!");
         createNotification("OpenAI Key successfully Inputted");
     } else{

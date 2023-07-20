@@ -16,12 +16,12 @@ mainControl.contextMenus.create({
 });
 
 function updateResultOnPopup(replyMessage){
-    mainControl.storage.local.set({ "lastReplyMessage": replyMessage })
-    .then(() => {
-        console.log("ChatGPT reply message stored successfully!");
-    })
-    .catch(error => {
-        console.error("Error storing reply message", error);
+    compat.storageSet({ "lastReplyMessage": replyMessage }, () => {
+        try{
+            console.log("ChatGPT reply message stored successfully!");
+        } catch(error){
+            console.error("Error storing reply message", error);
+        }
     });
 };
 
@@ -53,7 +53,7 @@ function contactOpenAIEndpoint(apiKey, message){
         updateResultOnPopup(replyMessage);
     })
     .catch(error => {
-    // Handle any error that occurs during the API request
+    // Handle any error that occurs during the APupdateResultOnPopupI request
         console.error('Error:', error);
         createNotification("GPT Error, please check OpenAI Key")
     });
@@ -70,11 +70,12 @@ function explainWithGPT(message){
                 createNotification("OpenAI API key is there");
 
                 var browserName = compat.queryBrowserName();
-                if(browserName == 'firefox'){
-                    contactOpenAIEndpoint(apiKey, message);
-                } else if(browserName == 'chrome'){
-                    contactOpenAIEndpoint(apiKey.openaiKey, message);    
-                }
+                contactOpenAIEndpoint(apiKey, message);
+                // if(browserName == 'firefox'){
+                //     contactOpenAIEndpoint(apiKey, message);
+                // } else if(browserName == 'chrome'){
+                //     contactOpenAIEndpoint(apiKey.openaiKey, message);
+                // }
             } catch(error){
                 console.error("Error retrieving API Key:", error);
                 createNotification("Error, Check if OpenAI API key is there");
