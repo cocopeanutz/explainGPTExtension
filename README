@@ -17,3 +17,7 @@ Alternatively, if you are a developer and wants to just load this as temporary e
 You can go to about:debugging > "This firefox" > "Load Temporary Add-on"
 
 To zip this folder use "7z a -tzip myarchive.zip myfolder"
+
+For Google Chrome >>>
+Go to settings > Extensions > toggle the "Developer mode"
+> load upnpacked > choose this directory 
