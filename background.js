@@ -71,11 +71,7 @@ function explainWithGPT(message){
 
                 var browserName = compat.queryBrowserName();
                 contactOpenAIEndpoint(apiKey, message);
-                // if(browserName == 'firefox'){
-                //     contactOpenAIEndpoint(apiKey, message);
-                // } else if(browserName == 'chrome'){
-                //     contactOpenAIEndpoint(apiKey.openaiKey, message);
-                // }
+                
             } catch(error){
                 console.error("Error retrieving API Key:", error);
                 createNotification("Error, Check if OpenAI API key is there");
