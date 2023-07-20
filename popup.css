@@ -1,0 +1,9 @@
+html
+{
+    width: 750px; /* max: 1000px */
+    height: 550px; /* max: 750px */
+}
+
+h6 {
+  font-size: 20px;
+}

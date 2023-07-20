@@ -1,11 +1,6 @@
-function createNotification(message){
-    browser.notifications.create({
-        type: "basic",
-        iconUrl: browser.extension.getURL("icons/icon48.png"),
-        title: "Translation",
-        message: message,
-    });
-};
+import * as compat from "./util.js"
+import {createNotification, mainControl} from "./util.js"
+
 
 function promptTemplate(message){
     // return `Please explain to me about the meaning \"'${message}'\"`
@@ -14,14 +9,14 @@ function promptTemplate(message){
 };
 
 
-browser.contextMenus.create({
+mainControl.contextMenus.create({
   id: "translateWithGPT",
   title: "Explain With ChatGPT",
   contexts: ["selection"],
 });
 
 function updateResultOnPopup(replyMessage){
-    browser.storage.local.set({ "lastReplyMessage": replyMessage })
+    mainControl.storage.local.set({ "lastReplyMessage": replyMessage })
     .then(() => {
         console.log("ChatGPT reply message stored successfully!");
     })
@@ -30,7 +25,7 @@ function updateResultOnPopup(replyMessage){
     });
 };
 
-function contactOpenAIEndpoint(apiKey, message, selectionTopPx, selectionLeftPx){
+function contactOpenAIEndpoint(apiKey, message){
     // Contact the OpenAPI Endpoint
     fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -49,7 +44,7 @@ function contactOpenAIEndpoint(apiKey, message, selectionTopPx, selectionLeftPx)
     })
     .then(response => response.json())
     .then(data => {
-        replyData = data
+        var replyData = data
         var replyMessage = replyData.choices[0].message.content
         // Handle the API response data here
         console.log(replyMessage);
@@ -64,22 +59,32 @@ function contactOpenAIEndpoint(apiKey, message, selectionTopPx, selectionLeftPx)
     });
 }
 
-function explainWithGPT(message, selectionTopPx, selectionLeftPx){
+function explainWithGPT(message){
     // Get the Open API Key from local browser local storage
-    browser.storage.local.get("openaiKey")
-    .then(result => {
-        var apiKey = result.openaiKey;
-        createNotification("OpenAI API key is there");
-        contactOpenAIEndpoint(apiKey, message, selectionTopPx, selectionLeftPx);
-    })
-    .catch(error => {
-        console.error("Error retrieving API Key:", error);
-        createNotification("Error, Check if OpenAI API key is there");
-        return
-    });
+    compat.storageGet("openaiKey",
+        //callback
+        result => {
+            try{
+                var apiKey = result.openaiKey;
+                if(apiKey==null){throw Error};
+                createNotification("OpenAI API key is there");
+
+                var browserName = compat.queryBrowserName();
+                if(browserName == 'firefox'){
+                    contactOpenAIEndpoint(apiKey, message);
+                } else if(browserName == 'chrome'){
+                    contactOpenAIEndpoint(apiKey.openaiKey, message);    
+                }
+            } catch(error){
+                console.error("Error retrieving API Key:", error);
+                createNotification("Error, Check if OpenAI API key is there");
+                return
+            }
+        }
+    )
 }
 
-browser.contextMenus.onClicked.addListener((info, tab) => {
+mainControl.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "translateWithGPT") {
     // Handle the menu item click here
     console.log("Selected text:", info.selectionText);
@@ -89,12 +94,12 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 // function createNewTab(){
-//     browser.tabs.query({ currentWindow: true, active: true }).then((tabs) => {
+//     mainControl.tabs.query({ currentWindow: true, active: true }).then((tabs) => {
 //         const currentTab = tabs[0];
 //         const currentIndex = currentTab.index;
 //
-//         browser.tabs.create({
-//             url: browser.extension.getURL('resultPage.html'),
+//         mainControl.tabs.create({
+//             url: mainControl.extension.getURL('resultPage.html'),
 //             index: currentIndex + 1,
 //             active: false
 //         });
@@ -104,29 +109,17 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
 
 
-browser.commands.onCommand.addListener(async command => {
-    if (command === "explainWithGPTCommand") {
-        try {
-            // createNewTab();
-            const activeTab = await browser.tabs.query({ active: true, currentWindow: true });
+mainControl.commands.onCommand.addListener(async command => {
+    try{
+        compat.getCurrentTab(activeTab => {
             const tabId = activeTab[0].id;
 
-            const selectionTopPx = await browser.tabs.executeScript(tabId, {
-                code: "window.getSelection().getRangeAt(0).getBoundingClientRect().top;"
-            });
-            const selectionLeftPx = await browser.tabs.executeScript(tabId, {
-                code: "window.getSelection().getRangeAt(0).getBoundingClientRect().left;"
-            });
-
-
-            const highlightedText = await browser.tabs.executeScript(tabId, {
-                code: "window.getSelection().toString();"
-            });
-            console.log("Highlighted text:", highlightedText[0]);
-            // Add your desired logic here
-            explainWithGPT(highlightedText[0], selectionTopPx, selectionLeftPx);
-        } catch (error) {
-            console.error("Error retrieving highlighted text:", error);
-        }
+            compat.getHighlightedText(tabId,
+            highlightedText => {
+                explainWithGPT(highlightedText)
+            })
+        })
+    } catch (error) {
+        console.error("Error retrieving highlighted text:", error);
     }
 });

@@ -1,8 +1,8 @@
 Change shortcut from manifest.json, default shortcut is alt+shift+u
 Change prompt by changing promptTemplate
 
-
-To install to firefox,
+For use with firefox >>>
+To install,
 1. Got to about:addons in the address bar.
 2. Click on the gear icon in the top-right corner and select "Install Add-on From File..."
 3. Select the zipped extension file
@@ -13,5 +13,7 @@ If the extension is not signed, firefox will popup error thinking that the exten
 If you don't want to go through the signing process hasle. Use Firefox Developer Edition or Nightly Build.
 And toggle the xpinstall.signatures.required options on about:config to False.
 
+Alternatively, if you are a developer and wants to just load this as temporary extension.
+You can go to about:debugging > "This firefox" > "Load Temporary Add-on"
 
 To zip this folder use "7z a -tzip myarchive.zip myfolder"

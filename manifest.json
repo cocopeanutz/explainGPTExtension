@@ -1,27 +1,27 @@
 {
-  "manifest_version": 2,
-  "name": "My Extension",
-  "version": "1.0",
-  "description": "A simple Firefox extension example",
-  "permissions": [
-      "notifications",
-      "contextMenus",
-      "commands",
-      "activeTab",
-      "storage",
-      "tabs",
-      "browser_action",
-      "https://api.openai.com/*"],
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
-  "commands": {
+    "manifest_version": 2,
+    "name": "My Extension",
+    "version": "1.0",
+    "description": "A simple Firefox extension example",
+    "permissions": [
+        "notifications",
+        "contextMenus",
+        "commands",
+        "activeTab",
+        "storage",
+        "tabs",
+        "browser_action",
+        "https://api.openai.com/*"],
+    "background": {
+        "page": "background.html"
+    },
+    "commands": {
         "explainWithGPTCommand": {
-          "suggested_key": {
-            "default": "Alt+Shift+U",
-            "mac": "Alt+Shift+U"
-          }
+            "suggested_key": {
+                "default": "Alt+Shift+U",
+                "mac": "Alt+Shift+U"
+            },
+            "description": "Explain With ChatGPT"
         }
     },
     "browser_action": {
