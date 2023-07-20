@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "My Extension",
+    "name": "GPT Explain",
     "version": "1.0",
-    "description": "A simple Firefox extension example",
+    "description": "Basically a shortcut, to ask openAI GPT a certain phrase/words. Just highlight the text, and press the shortcut button (default: Alt+Shift+U)",
     "permissions": [
         "notifications",
         "contextMenus",
